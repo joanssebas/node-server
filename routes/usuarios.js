@@ -7,12 +7,27 @@ const {
   usuariosDetele,
   usuariosPatch,
 } = require("../controllers/usuarios");
+const {validarcampos} = require("../middlewares/validar-campos");
+const {
+  esRoleValido,
+  emailExiste,
+  existeUsuarioPorId,
+} = require("../helpers/db-validators");
 
 const router = Router();
 
 router.get("/", usuariosGet);
 
-router.put("/:id", usuariosPut);
+router.put(
+  "/:id",
+  [
+    check("id", "no es un Id valido").isMongoId(),
+    check("id").custom(existeUsuarioPorId),
+    check("rol").custom(esRoleValido),
+    validarcampos,
+  ],
+  usuariosPut
+);
 
 router.post(
   "/",
@@ -25,12 +40,23 @@ router.post(
     ).isLength({
       min: 6,
     }),
-    check("rol", "No es un rol valido").isIn(["ADMIN_ROLE", "USER_ROLE"]),
+    check("rol").custom(esRoleValido),
+    check("correo").custom(emailExiste),
+    // check("rol", "No es un rol valido").isIn(["ADMIN_ROLE", "USER_ROLE"]),
+    validarcampos,
   ],
   usuariosPost
 );
 
-router.delete("/", usuariosDetele);
+router.delete(
+  "/:id",
+  [
+    check("id", "no es un Id valido").isMongoId(),
+    check("id").custom(existeUsuarioPorId),
+    validarcampos,
+  ],
+  usuariosDetele
+);
 
 router.patch("/", usuariosPatch);
 
