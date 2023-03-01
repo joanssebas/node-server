@@ -7,6 +7,7 @@ class Server {
 
     this.port = process.env.PORT;
     this.usuariosPath = "/api/usuarios";
+    this.authPath = "/api/auth";
 
     //lectura y parseo del codigo
     this.app.use(express.json());
@@ -34,6 +35,7 @@ class Server {
 
   routes() {
     this.app.use(this.usuariosPath, require("../routes/usuarios"));
+    this.app.use(this.authPath, require("../routes/auth"));
   }
 
   listener() {
