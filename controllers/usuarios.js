@@ -64,7 +64,10 @@ const usuariosDetele = async (req, res) => {
   //borrarlo cambiandole el estado
   const usuario = await Usuario.findByIdAndUpdate(id, {estado: false});
 
-  res.json(usuario);
+  //ver el usuario autenticado que tiene el token
+  const usuarioAutenticado = req.usuario;
+
+  res.json({usuario});
 };
 
 const usuariosPatch = (req, res) => {
